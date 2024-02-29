@@ -31,6 +31,10 @@ pool.query('SELECT NOW()', (err, res) => {
   }
 })
 
+app.get('/', (req, res) => {
+  res.send('Visit: <a href="https://tancet.vercel.app">https://tancet.vercel.app</a>')
+})
+
 // Login endpoint
 app.post('/login', (req, res) => {
   const { username, password } = req.body
@@ -42,10 +46,10 @@ app.post('/login', (req, res) => {
       res.status(500).json({ success: false, message: 'Internal Server Error' })
     } else {
       if (result.rows.length > 0) {
-        const user = result.rows[0]; // Assuming there's only one user with the provided username/password
+        const user = result.rows[0] // Assuming there's only one user with the provided username/password
         // Authentication successful, generate JWT token
-        const token = jwt.sign({ username: username, name: user.name }, secretKey, { expiresIn: '1h' });
-        res.json({ success: true, token: token });
+        const token = jwt.sign({ username: username, name: user.name }, secretKey, { expiresIn: '1h' })
+        res.json({ success: true, token: token })
       } else {
         // Authentication failed
         res.json({ success: false, message: 'Invalid username or password' })
@@ -58,20 +62,19 @@ app.post('/login', (req, res) => {
 app.get('/dashboard', verifyToken, (req, res) => {
   // Get username from decoded token
   const { username, name } = req.decoded
-  console.log('login:'+username+',')
+  console.log('login:' + username + ',')
   // You can fetch additional user details from the database if needed
   res.json({ success: true, message: 'Welcome to the dashboard', rno: username, name: name })
 })
 
 // Dashboard endpoint
 app.get('/download', verifyToken, (req, res) => {
-    // Get username from decoded token
-    const { username, name } = req.decoded
-    console.log('download:'+username+',')
-    // You can fetch additional user details from the database if needed
-    res.json({ success: true, rno: username , name})
-  })
-  
+  // Get username from decoded token
+  const { username, name } = req.decoded
+  console.log('download:' + username + ',')
+  // You can fetch additional user details from the database if needed
+  res.json({ success: true, rno: username, name })
+})
 
 // Middleware function to verify JWT token
 function verifyToken(req, res, next) {
